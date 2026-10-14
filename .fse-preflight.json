@@ -1,0 +1,23 @@
+{
+  "cssBaseline": {
+    "reasons": {
+      "2026-09-18": "Committed backlog at ajr-starter-theme 0.4.0, recorded unreviewed when the specificity gate landed (2026-09-18). Only NEW selectors gate from here. Reviewing it (genuine core out-ranks into outrankCore, the rest under 0,2,1) is separate work."
+    },
+    "outrankCore": [],
+    "specificity": [
+      {
+        "selector": ".ajr-card .wp-block-post-title a::after",
+        "is": "0,2,2",
+        "file": "assets/css/app.css",
+        "on": "2026-09-18"
+      },
+      {
+        "selector": "body.admin-bar header.wp-block-template-part",
+        "is": "0,2,2",
+        "file": "assets/css/app.css",
+        "on": "2026-09-18"
+      }
+    ],
+    "physical": []
+  }
+}

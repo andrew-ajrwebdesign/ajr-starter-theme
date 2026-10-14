@@ -1,0 +1,22 @@
+# ⛔ LF in the repository, always.
+#
+# This file used to say `* -text`, which switches normalisation OFF. On a Windows checkout
+# that leaves CRLF in the index while every editor writes LF, so each touched file lands as
+# a whole-file diff and repoints `git blame` for the entire file — the real change becomes
+# unreviewable. preflight fails the build for it.
+* text=auto eol=lf
+
+# ⛔ Keep dev files out of `git archive`, which is how deploy-export.cmd builds the
+# FTP-ready folder. Without these, .gitignore and .gitattributes ship to the client's
+# server — harmless but untidy, and preflight blocks the export for it.
+/.gitattributes export-ignore
+/.gitignore    export-ignore
+/bin           export-ignore
+/.fse-preflight.json export-ignore
+
+# CI, lint config, the Playground demo and the README are repository furniture, not theme code.
+/.github        export-ignore
+/phpcs.xml      export-ignore
+/composer.json  export-ignore
+/blueprint.json export-ignore
+/README.md      export-ignore

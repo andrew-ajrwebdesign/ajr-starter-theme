@@ -1,0 +1,150 @@
+/*
+ * Only what theme.json cannot express.
+ *
+ * ⛔ No colour literals. Every colour comes through a token — var(--wp--preset--color--*)
+ * or a color-mix() derived from one. A hex here is a defect, not a shortcut.
+ */
+
+/*
+ * NO skip-link CSS here, deliberately.
+ *
+ * WordPress core injects its own for block themes -- _block_template_add_skip_link()
+ * in wp-includes/block-template.php emits <a href="#wp--skip-link--target"> and gives
+ * <main> that id. This file previously styled an .ajr-skip-link that no markup emitted,
+ * under a comment claiming core does not provide one. Both halves were wrong: dead CSS,
+ * and a false statement that would have sent the next reader to fix a non-problem.
+ *
+ * Verified against core source, not documentation, on 2026-08-20.
+ */
+
+/*
+ * Whole-box clickable cards.
+ *
+ * Standing rule: a card with ONE destination must be clickable across its whole box, not
+ * only on the title. The title link is stretched to cover the card, and the card itself
+ * carries the hover and focus-within states so keyboard users see the same affordance.
+ */
+.ajr-card {
+	position: relative;
+	transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.ajr-card:hover,
+.ajr-card:focus-within {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px color-mix(in srgb, var(--wp--preset--color--contrast) 12%, transparent);
+}
+
+.ajr-card .wp-block-post-title a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ajr-card {
+		transition: none;
+	}
+	.ajr-card:hover,
+	.ajr-card:focus-within {
+		transform: none;
+	}
+}
+
+/*
+ * Current-page state on the navigation.
+ *
+ * Core renders .current-menu-item but styles nothing, so without this a visitor has no
+ * indication of where they are in the site. Flagged by fse-preflight as a warning for
+ * exactly that reason.
+ */
+.wp-block-navigation .current-menu-item > a,
+.wp-block-navigation .current_page_item > a,
+.wp-block-navigation .current-menu-ancestor > a {
+	text-decoration: underline;
+	text-underline-offset: 0.3em;
+	font-weight: 600;
+}
+
+/*
+ * Sticky header -- Rule 13, and the one implementation that actually works.
+ *
+ * ⛔ The obvious version is a silent no-op: `"position":{"type":"sticky"}` on a group
+ * INSIDE parts/header.html cannot stick, because the rendered part is always wrapped in
+ * <header class="wp-block-template-part"> and that wrapper IS the group's containing
+ * block. Its height is the header's height, so there is nowhere to move. Nothing errors;
+ * the header just scrolls away. A live client theme shipped exactly that.
+ *
+ * So the rule goes on the wrapper, which theme.json cannot express.
+ *
+ * The admin-bar offsets are not optional: without them a logged-in reviewer -- i.e. the
+ * client, during review -- sees the header pinned underneath the admin bar and reports it
+ * as broken. z-index only needs to clear page content; nav dropdowns live in the header's
+ * own stacking context and stay above the page for free.
+ *
+ * ⚠️ Cannot be confirmed by grep. Screenshot top-of-page and mid-scroll, logged out,
+ * desktop and mobile.
+ */
+header.wp-block-template-part {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+}
+
+body.admin-bar header.wp-block-template-part {
+	top: 32px;
+}
+
+@media (max-width: 782px) {
+	body.admin-bar header.wp-block-template-part {
+		top: 46px;
+	}
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * SITE CHROME HAS NO GAP. Header, main and footer butt together.
+ *
+ * ⛔ THIS RULE IS LOAD-BEARING. Do not delete it as "an override that shouldn't
+ * be needed" — it exists because WordPress conflates two different decisions
+ * under one setting.
+ *
+ * `styles.spacing.blockGap` in theme.json sets the default gap BETWEEN BLOCKS IN
+ * CONTENT (paragraph to heading, card to card) — which a client typing a page
+ * genuinely wants. But WordPress also emits it as:
+ *
+ *     :where(.wp-site-blocks) > * { margin-block-start: var(--wp--preset--spacing--XX); }
+ *
+ * whose children are the HEADER, MAIN and FOOTER. So the same number that spaces
+ * two paragraphs also drives a band of blank page between the header and the hero.
+ * On a full-bleed banded site that reads as a broken layout, and it has now shown
+ * up on more than one theme built from this starter.
+ *
+ * Setting the root blockGap to 0 "fixes" it and takes the content spacing with it,
+ * which is why that is the wrong fix. Zeroing only the site-level children keeps
+ * both behaviours correct and independent.
+ *
+ * Any band that genuinely needs breathing room sets its own padding — every
+ * section in this theme already does.
+ * ───────────────────────────────────────────────────────────────────────────── */
+:where(.wp-site-blocks) > * {
+	margin-block-start: 0;
+	margin-block-end: 0;
+}
+
+/* ⛔ AND AGAIN, WITH SPECIFICITY THAT CANNOT LOSE A SOURCE-ORDER FIGHT.
+ *
+ * The rule above uses the SAME selector WordPress does, so it has the same (zero)
+ * specificity and only wins by coming later in the cascade. That held locally and FAILED on
+ * staging: SiteGround's Speed Optimizer concatenates every stylesheet into one combined
+ * file, and in that file our CSS landed BEFORE core's global styles — so core won and the
+ * gap came back. Identical code, different result, purely because of an optimiser.
+ *
+ * Naming the actual children is specificity 0,0,2 against core's 0,0,0. It wins wherever it
+ * ends up, on any host, with any combiner. Do not "simplify" this back into one rule. */
+.wp-site-blocks > header,
+.wp-site-blocks > main,
+.wp-site-blocks > footer,
+.wp-site-blocks > .wp-block-template-part {
+	margin-block-start: 0;
+	margin-block-end: 0;
+}

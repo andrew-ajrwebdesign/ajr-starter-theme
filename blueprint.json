@@ -1,0 +1,36 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "AJR Starter Kit",
+    "author": "AJR Web Design",
+    "description": "AJR Starter Theme (FSE) with AJR Starter Core, both installed from GitHub."
+  },
+  "landingPage": "/",
+  "preferredVersions": { "php": "8.3", "wp": "latest" },
+  "steps": [
+    { "step": "login" },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "git:directory",
+        "url": "https://github.com/andrew-ajrwebdesign/ajr-starter-core",
+        "ref": "main",
+        "refType": "branch",
+        "path": "/"
+      },
+      "options": { "activate": true, "targetFolderName": "ajr-starter-core" }
+    },
+    {
+      "step": "installTheme",
+      "themeData": {
+        "resource": "git:directory",
+        "url": "https://github.com/andrew-ajrwebdesign/ajr-starter-theme",
+        "ref": "main",
+        "refType": "branch",
+        "path": "/"
+      },
+      "options": { "activate": true, "targetFolderName": "ajr-starter-theme" }
+    },
+    { "step": "setSiteOptions", "options": { "blogname": "AJR Starter Kit", "blogdescription": "FSE theme + settings-driven core plugin" } }
+  ]
+}

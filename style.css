@@ -1,0 +1,49 @@
+/*
+Theme Name:        AJR Starter Theme
+Theme URI:         https://github.com/andrew-ajrwebdesign/ajr-starter-theme
+Author:            AJR Web Design
+Author URI:        https://ajrwebdesign.com
+Description:       FSE block theme scaffold. Real blocks only, theme.json-driven design tokens, semantic landmarks, pattern-first composition. Pairs with AJR Starter Core.
+Requires at least: 6.7
+Tested up to:      6.8
+Requires PHP:      8.1
+Version:           0.4.0
+License:           GNU General Public License v2 or later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain:       ajr-starter-theme
+Tags:              full-site-editing, block-patterns, accessibility-ready, blog, portfolio
+
+RENAMING FOR A CLIENT BUILD — five replacements, then rename the folder:
+
+  AJR Starter Theme  -> Acme          (this header)
+  ajr-starter-theme  -> acme          (text domain, folder, pattern slugs)
+  ajr_starter_theme  -> acme_theme    (UNDERSCORE form — variables in functions.php)
+  ajr-card           -> acme-card     (CSS class: app.css, patterns/blog-list.php)
+  AJR_STARTER_THEME  -> ACME_THEME    (PHP constants in functions.php)
+
+⛔ The UNDERSCORE form is a separate replacement — a hyphen-based find-and-replace
+does not touch it, and the four-item table this replaces reported itself complete
+while leaving it behind (caught on a client build, 2026-08-25).
+Verify with BOTH forms: grep -rn 'ajr-starter\|ajr_starter\|AJR_STARTER' .
+
+README.md carries the same table plus the post-rename checklist.
+*/
+
+/*
+ * Deliberately almost empty. theme.json IS the design system — every colour, size and
+ * space is a token there, and CSS here exists only for what theme.json cannot express.
+ * ⛔ This said "per-block CSS is loaded with wp_enqueue_block_style() from functions.php so
+ * it ships only on pages that actually use the block." That was never true — there is no
+ * wp_enqueue_block_style() call anywhere in this theme. Corrected 2026-08-24 after a
+ * build-performance review read the claim and then grepped for it.
+ *
+ * What actually happens: core's wp_should_load_separate_core_block_assets() defaults to
+ * FALSE, so the whole wp-block-library stylesheet is enqueued render-blocking on every page
+ * — and add_theme_support('wp-block-styles') in functions.php pulls wp-block-library-theme
+ * in alongside it. Opting into per-block assets requires
+ * add_filter('should_load_separate_core_block_assets','__return_true') and a real
+ * before/after measurement. Not done here, and not claimed.
+ *
+ * DO NOT add colour literals to this file. Every colour must come through a token
+ * (var(--wp--preset--color--*)) or a color-mix() derived from one.
+ */
